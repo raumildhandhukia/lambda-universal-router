@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] - 2024-03-17
+
+### Added
+- Custom event handler support as fallback
+- DynamoDB Streams event support
+- Kinesis Stream event support
+- SNS event support
+- EventBridge/CloudWatch Events support
+- Comprehensive test coverage for all event types
+- Better organization of event handlers in separate files
+
+### Changed
+- Moved all event types to their own files in the events directory
+- Improved error handling and type safety
+- Updated documentation with new event types and examples
+
 ## [0.1.0] - 2024-03-17
 
 ### Added
