@@ -5,7 +5,8 @@ from lambda_universal_router import Router
 from lambda_universal_router.events import (
     APIGatewayEvent, SQSEvent, S3Event,
     DynamoDBStreamEvent, KinesisStreamEvent,
-    SNSEvent, EventBridgeEvent, CustomEvent
+    SNSEvent, EventBridgeEvent, CustomEvent,
+    KafkaEvent
 )
 
 @pytest.fixture
@@ -228,6 +229,32 @@ def test_multiple_custom_handlers_error(router):
         @router.custom()
         def handler2(event: CustomEvent, context):
             return "handler2"
+
+def test_kafka_routing(router):
+    @router.kafka()
+    def handler(event: KafkaEvent, context):
+        assert isinstance(event, KafkaEvent)
+        assert len(event.records) == 1
+        assert event.records[0].topic == "test-topic"
+        assert event.records[0].value == "test message"
+        return "processed"
+
+    event = {
+        "eventSource": "aws:kafka",
+        "eventSourceArn": "arn:aws:kafka:us-east-1:123456789012:cluster/test/test-id",
+        "records": [{
+            "topic": "test-topic",
+            "partition": 0,
+            "offset": 0,
+            "timestamp": 1616447425000,
+            "timestampType": "CREATE_TIME",
+            "value": "test message",
+            "headers": []
+        }]
+    }
+
+    result = router.dispatch(event, {})
+    assert result == "processed"
 
 def test_no_handler_found(router):
     # No handlers registered, including custom handler

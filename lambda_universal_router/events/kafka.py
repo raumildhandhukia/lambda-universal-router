@@ -35,7 +35,8 @@ class KafkaEvent(BaseEvent):
         self.event_source = event_dict.get('eventSource', '')
         self.event_source_arn = event_dict.get('eventSourceArn', '')
         self.bootstrap_servers = event_dict.get('bootstrapServers', '')
-        self.records = [
-            KafkaRecord.from_dict(record)
-            for record in event_dict.get('records', {}).values()
-        ]
+        records = event_dict.get('records', [])
+        if isinstance(records, dict):
+            # Handle old format where records was a dict
+            records = list(records.values())
+        self.records = [KafkaRecord.from_dict(record) for record in records]
