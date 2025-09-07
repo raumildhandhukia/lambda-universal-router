@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="lambda-universal-router",
-    version="0.2.5",
+    version="1.0.0",
     packages=find_packages(),
     install_requires=[],
     python_requires=">=3.7",
@@ -21,7 +21,7 @@ setup(
         "Issue Tracker": "https://github.com/raumildhandhukia/lambda-universal-router/issues",
     },
     classifiers=[
-        "Development Status :: 3 - Alpha",
+        "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python :: 3",
