@@ -1,6 +1,20 @@
-# API Gateway Events
+# API Gateway REST API Events
 
-The API Gateway integration allows you to handle REST and HTTP API requests in your Lambda functions.
+The API Gateway integration in this library specifically handles RESTful API requests in your Lambda functions. This integration supports the REST API type in API Gateway (not HTTP APIs or WebSocket APIs).
+
+## Supported Features
+
+1. **REST API Only**
+   - Full support for REST API event format
+   - Path-based routing with parameters
+   - Method-based routing (GET, POST, PUT, DELETE, etc.)
+   - Request/response mapping
+   - Note: HTTP APIs and WebSocket APIs are not supported
+
+2. **Integration Type**
+   - Designed for Lambda proxy integration
+   - Handles API Gateway's proxy event format
+   - Automatically maps request/response structures
 
 ## Event Structure
 
@@ -160,7 +174,20 @@ def secure_endpoint(event: APIGatewayEvent, context):
        return {"statusCode": 400, "body": "Missing ID"}
    ```
 
+## Limitations
+
+1. **HTTP API Support**
+   - This library does not support API Gateway HTTP APIs
+   - HTTP APIs use a different event format
+   - If you need HTTP API support, please open an issue
+
+2. **WebSocket Support**
+   - WebSocket APIs are not supported
+   - WebSocket APIs require different event handling
+   - Consider using a separate library for WebSocket support
+
 ## See Also
 
-- [API Gateway Documentation](https://docs.aws.amazon.com/apigateway/latest/developerguide/welcome.html)
-- [Lambda Integration](https://docs.aws.amazon.com/apigateway/latest/developerguide/getting-started-with-lambda-integration.html)
+- [API Gateway REST API Documentation](https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-rest-api.html)
+- [REST API vs HTTP API](https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-vs-rest.html)
+- [Lambda Proxy Integration](https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html)

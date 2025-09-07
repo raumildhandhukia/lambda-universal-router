@@ -6,9 +6,14 @@ from .events import (
     SNSEvent, EventBridgeEvent, CustomEvent,
     KafkaEvent
 )
+from .events.kafka import KafkaEventSource
 
 class APIGatewayHandler(EventHandler):
-    """Handler for API Gateway events."""
+    """Handler for API Gateway REST API events.
+    
+    This handler specifically supports REST API events from API Gateway.
+    It does not handle HTTP APIs or WebSocket APIs, which use different event formats.
+    """
     
     def can_handle(self, event: Dict[str, Any]) -> bool:
         return (
@@ -109,7 +114,7 @@ class KafkaHandler(EventHandler):
     def can_handle(self, event: Dict[str, Any]) -> bool:
         return (
             'eventSource' in event and
-            event['eventSource'] in ['aws:kafka', 'aws:self-managed-kafka'] and
+            event['eventSource'] in [KafkaEventSource.MSK.value, KafkaEventSource.SELF_MANAGED.value] and
             'records' in event
         )
     
