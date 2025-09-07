@@ -1,24 +1,14 @@
-# Lambda Universal Router Documentation
+# Lambda Universal Router
 
 A flexible and type-safe router for AWS Lambda functions that supports multiple event sources.
 
-## Table of Contents
-
-- [Installation](#installation)
-- [Quick Start](#quick-start)
-- [Event Sources](#event-sources)
-- [API Reference](api.md)
-- [Examples](examples.md)
-- [Contributing](contributing.md)
-- [Changelog](changelog.md)
-
-## Installation
+## Quick Start
 
 ```bash
 pip install lambda-universal-router
 ```
 
-## Quick Start
+## Basic Usage
 
 ```python
 from lambda_universal_router import Router
@@ -43,112 +33,39 @@ def lambda_handler(event, context):
     return router.dispatch(event, context)
 ```
 
+## Features
+
+- 🎯 Type-safe event handling with proper Python type hints
+- 🔄 Support for multiple AWS event sources
+- 🎨 Clean decorator-based routing
+- 📦 Easy to extend with new event sources
+- 🔒 Structured event objects with proper typing
+- 🔍 Custom event handler support for unknown event types
+
 ## Event Sources
 
-### API Gateway
-Handle REST and HTTP API events with path and method-based routing:
+- [API Gateway](events/api-gateway.md) - Handle REST and HTTP API requests
+- [SQS](events/sqs.md) - Process messages from queues
+- [S3](events/s3.md) - React to object changes
+- [DynamoDB Streams](events/dynamodb.md) - Handle table changes
+- [Kinesis](events/kinesis.md) - Process data streams
+- [SNS](events/sns.md) - Handle notifications
+- [EventBridge](events/eventbridge.md) - Handle scheduled and custom events
+- [Custom Events](events/custom.md) - Handle unknown event types
 
-```python
-@router.apigateway("/users/{id}", method="GET")
-def get_user(event: APIGatewayEvent, context):
-    user_id = event.path_parameters['id']
-    return {
-        "statusCode": 200,
-        "body": {"id": user_id}
-    }
-```
+## Documentation
 
-[Learn more about API Gateway events](events/api-gateway.md)
+- [API Reference](api.md)
+- [Examples](examples.md)
+- [Contributing Guide](contributing.md)
+- [Changelog](changelog.md)
 
-### SQS (Simple Queue Service)
-Process messages from SQS queues:
+## Links
 
-```python
-@router.sqs()
-def handle_messages(event: SQSEvent, context):
-    for msg in event.records:
-        print(f"Message ID: {msg.message_id}")
-        print(f"Body: {msg.body}")
-```
+- [GitHub Repository](https://github.com/raumildhandhukia/lambda-universal-router)
+- [PyPI Package](https://pypi.org/project/lambda-universal-router)
+- [Issue Tracker](https://github.com/raumildhandhukia/lambda-universal-router/issues)
 
-[Learn more about SQS events](events/sqs.md)
+## License
 
-### S3 (Object Storage)
-React to S3 bucket events:
-
-```python
-@router.s3()
-def handle_s3(event: S3Event, context):
-    for record in event.records:
-        print(f"Bucket: {record.bucket.name}")
-        print(f"File: {record.s3_object.key}")
-```
-
-[Learn more about S3 events](events/s3.md)
-
-### DynamoDB Streams
-Handle DynamoDB table changes:
-
-```python
-@router.dynamodb()
-def handle_changes(event: DynamoDBStreamEvent, context):
-    for record in event.records:
-        print(f"Operation: {record.event_name}")
-        print(f"Data: {record.dynamodb}")
-```
-
-[Learn more about DynamoDB events](events/dynamodb.md)
-
-### Kinesis Streams
-Process records from Kinesis streams:
-
-```python
-@router.kinesis()
-def handle_stream(event: KinesisStreamEvent, context):
-    for record in event.records:
-        print(f"Data: {record.data}")
-```
-
-[Learn more about Kinesis events](events/kinesis.md)
-
-### SNS (Simple Notification Service)
-Handle SNS notifications:
-
-```python
-@router.sns()
-def handle_notifications(event: SNSEvent, context):
-    for msg in event.records:
-        print(f"Message: {msg.message}")
-```
-
-[Learn more about SNS events](events/sns.md)
-
-### EventBridge (CloudWatch Events)
-Handle scheduled and custom events:
-
-```python
-@router.eventbridge()
-def handle_events(event: EventBridgeEvent, context):
-    print(f"Event type: {event.detail_type}")
-    print(f"Details: {event.detail.raw_detail}")
-```
-
-[Learn more about EventBridge events](events/eventbridge.md)
-
-### Custom Events
-Handle unknown or custom event types:
-
-```python
-@router.custom()
-def handle_unknown(event: CustomEvent, context):
-    print(f"Raw event: {event.event_data}")
-```
-
-[Learn more about Custom events](events/custom.md)
-
-## Next Steps
-
-- Check out the [API Reference](api.md) for detailed documentation
-- See [Examples](examples.md) for more use cases
-- Learn how to [Contribute](contributing.md)
-- View the [Changelog](changelog.md)
+This project is licensed under the MIT License - see the [LICENSE](../LICENSE) file for details.

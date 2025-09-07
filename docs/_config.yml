@@ -9,24 +9,19 @@ plugins:
   - jekyll-remote-theme
   - jekyll-seo-tag
 
-# GitHub metadata
-github:
-  is_project_page: true
-  repository_url: https://github.com/raumildhandhukia/lambda-universal-router
-  repository_name: lambda-universal-router
-  owner_name: Raumil Dhandhukia
-  owner_url: https://github.com/raumildhandhukia
-
 # Build settings
 markdown: kramdown
-highlighter: rouge
 kramdown:
   input: GFM
   syntax_highlighter: rouge
+  auto_ids: true
 
 # Exclude files from processing
 exclude:
   - Gemfile
   - Gemfile.lock
-  - node_modules
-  - vendor
+  - vendor/
+  - .sass-cache/
+  - .jekyll-cache/
+  - gemfiles/
+  - node_modules/
