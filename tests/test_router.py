@@ -1,78 +1,83 @@
 from __future__ import annotations
-import unittest
+import pytest
 from lambda_universal_router import Router
 from lambda_universal_router.events import APIGatewayEvent, SQSEvent, S3Event
 
-class TestRouter(unittest.TestCase):
-    def setUp(self):
-        self.router = Router()
+@pytest.fixture
+def router():
+    return Router()
 
-    def test_api_gateway_routing(self):
-        @self.router.apigateway("/test", method="GET")
-        def handler(event: APIGatewayEvent, context):
-            return {"statusCode": 200, "body": "test"}
+def test_api_gateway_routing(router):
+    @router.apigateway("/test", method="GET")
+    def handler(event: APIGatewayEvent, context):
+        return {"statusCode": 200, "body": "test"}
 
-        event = {
+    event = {
+        "httpMethod": "GET",
+        "path": "/test",
+        "requestContext": {
             "httpMethod": "GET",
             "path": "/test",
-            "requestContext": {
-                "httpMethod": "GET",
-                "path": "/test",
-                "stage": "prod",
-                "requestId": "test-id"
-            },
-            "headers": {},
-            "queryStringParameters": {},
-            "pathParameters": {}
-        }
+            "stage": "prod",
+            "requestId": "test-id"
+        },
+        "headers": {},
+        "queryStringParameters": {},
+        "pathParameters": {}
+    }
 
-        result = self.router.dispatch(event, {})
-        self.assertEqual(result["statusCode"], 200)
-        self.assertEqual(result["body"], "test")
+    result = router.dispatch(event, {})
+    assert result["statusCode"] == 200
+    assert result["body"] == "test"
 
-    def test_sqs_routing(self):
-        @self.router.sqs()
-        def handler(event: SQSEvent, context):
-            return "processed"
+def test_sqs_routing(router):
+    @router.sqs()
+    def handler(event: SQSEvent, context):
+        return "processed"
 
-        event = {
-            "Records": [{
-                "messageId": "test",
-                "body": "test message",
-                "messageAttributes": {},
-                "eventSource": "aws:sqs"
-            }]
-        }
+    event = {
+        "Records": [{
+            "messageId": "test",
+            "body": "test message",
+            "messageAttributes": {},
+            "eventSource": "aws:sqs"
+        }]
+    }
 
-        result = self.router.dispatch(event, {})
-        self.assertEqual(result, "processed")
+    result = router.dispatch(event, {})
+    assert result == "processed"
 
-    def test_s3_routing(self):
-        @self.router.s3()
-        def handler(event: S3Event, context):
-            return "processed"
+def test_s3_routing(router):
+    @router.s3()
+    def handler(event: S3Event, context):
+        return "processed"
 
-        event = {
-            "Records": [{
-                "eventName": "ObjectCreated:Put",
-                "eventTime": "2024-03-17T12:00:00.000Z",
-                "s3": {
-                    "bucket": {
-                        "name": "test-bucket",
-                        "arn": "arn:aws:s3:::test-bucket"
-                    },
-                    "object": {
-                        "key": "test.txt",
-                        "size": 123,
-                        "eTag": "abc123"
-                    }
+    event = {
+        "Records": [{
+            "eventName": "ObjectCreated:Put",
+            "eventTime": "2024-03-17T12:00:00.000Z",
+            "s3": {
+                "bucket": {
+                    "name": "test-bucket",
+                    "arn": "arn:aws:s3:::test-bucket"
                 },
-                "eventSource": "aws:s3"
-            }]
-        }
+                "object": {
+                    "key": "test.txt",
+                    "size": 123,
+                    "eTag": "abc123"
+                }
+            },
+            "eventSource": "aws:s3"
+        }]
+    }
 
-        result = self.router.dispatch(event, {})
-        self.assertEqual(result, "processed")
+    result = router.dispatch(event, {})
+    assert result == "processed"
 
-if __name__ == '__main__':
-    unittest.main()
+def test_invalid_event_type(router):
+    event = {
+        "invalid": "event"
+    }
+    
+    with pytest.raises(ValueError, match="No handler found for the given event type"):
+        router.dispatch(event, {})
