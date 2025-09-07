@@ -3,7 +3,8 @@ from .base import EventHandler, HandlerRegistration, BaseEvent
 from .handlers import (
     APIGatewayHandler, SQSHandler, S3Handler,
     DynamoDBStreamHandler, KinesisStreamHandler,
-    SNSHandler, EventBridgeHandler, CustomHandler
+    SNSHandler, EventBridgeHandler, KafkaHandler,
+    CustomHandler
 )
 
 class Router:
@@ -20,6 +21,7 @@ class Router:
             'kinesis': KinesisStreamHandler(),
             'sns': SNSHandler(),
             'eventbridge': EventBridgeHandler(),
+            'kafka': KafkaHandler(),
             'custom': CustomHandler()
         }
     
@@ -104,6 +106,18 @@ class Router:
                 HandlerRegistration(
                     func=func,
                     handler=self._event_handlers['eventbridge']
+                )
+            )
+            return func
+        return decorator
+
+    def kafka(self) -> Callable:
+        """Decorator for Amazon MSK (Kafka) event handlers."""
+        def decorator(func: Callable) -> Callable:
+            self._handlers.append(
+                HandlerRegistration(
+                    func=func,
+                    handler=self._event_handlers['kafka']
                 )
             )
             return func

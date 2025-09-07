@@ -55,7 +55,7 @@ def lambda_handler(event, context):
 
 ## Documentation
 
-- [API Reference](api.md)
+- [API Reference](API.md)
 - [Examples](examples.md)
 - [Contributing Guide](contributing.md)
 - [Changelog](changelog.md)

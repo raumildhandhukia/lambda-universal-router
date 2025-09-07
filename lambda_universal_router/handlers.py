@@ -3,7 +3,8 @@ from .base import EventHandler, BaseEvent
 from .events import (
     APIGatewayEvent, SQSEvent, S3Event,
     DynamoDBStreamEvent, KinesisStreamEvent,
-    SNSEvent, EventBridgeEvent, CustomEvent
+    SNSEvent, EventBridgeEvent, CustomEvent,
+    KafkaEvent
 )
 
 class APIGatewayHandler(EventHandler):
@@ -101,6 +102,19 @@ class EventBridgeHandler(EventHandler):
     
     def parse_event(self, event: Dict[str, Any]) -> EventBridgeEvent:
         return EventBridgeEvent(event)
+
+class KafkaHandler(EventHandler):
+    """Handler for Amazon MSK (Kafka) events."""
+    
+    def can_handle(self, event: Dict[str, Any]) -> bool:
+        return (
+            'eventSource' in event and
+            event['eventSource'] in ['aws:kafka', 'aws:self-managed-kafka'] and
+            'records' in event
+        )
+    
+    def parse_event(self, event: Dict[str, Any]) -> KafkaEvent:
+        return KafkaEvent(event)
 
 class CustomHandler(EventHandler):
     """Handler for custom or unknown event types."""
