@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="lambda-universal-router",
-    version="0.2.1",
+    version="0.2.2",
     packages=find_packages(),
     install_requires=[],
     python_requires=">=3.7",
@@ -12,6 +12,13 @@ setup(
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
     url="https://github.com/raumildhandhukia/lambda-universal-router",
+    project_urls={
+        "Documentation": "https://raumildhandhukia.github.io/lambda-universal-router/",
+        "Source": "https://github.com/raumildhandhukia/lambda-universal-router",
+        "Changelog": "https://github.com/raumildhandhukia/lambda-universal-router/blob/main/CHANGELOG.md",
+        "License": "https://github.com/raumildhandhukia/lambda-universal-router/blob/main/LICENSE",
+        "Issue Tracker": "https://github.com/raumildhandhukia/lambda-universal-router/issues",
+    },
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
