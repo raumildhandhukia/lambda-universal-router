@@ -1,3 +1,4 @@
+from __future__ import annotations
 from typing import Any, Dict, List, Optional
 from dataclasses import dataclass
 from .base import BaseEvent
@@ -10,7 +11,7 @@ class APIGatewayRequestContext:
     request_id: str
     
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> 'APIGatewayRequestContext':
+    def from_dict(cls, data: Dict[str, Any]) -> APIGatewayRequestContext:
         return cls(
             http_method=data.get('httpMethod', ''),
             path=data.get('path', ''),
@@ -40,7 +41,7 @@ class SQSMessage:
     attributes: Dict[str, Any]
     
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> 'SQSMessage':
+    def from_dict(cls, data: Dict[str, Any]) -> SQSMessage:
         return cls(
             message_id=data.get('messageId', ''),
             body=data.get('body', ''),
@@ -64,7 +65,7 @@ class S3Object:
     etag: str
     
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> 'S3Object':
+    def from_dict(cls, data: Dict[str, Any]) -> S3Object:
         return cls(
             key=data.get('key', ''),
             size=data.get('size', 0),
@@ -78,7 +79,7 @@ class S3Bucket:
     arn: str
     
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> 'S3Bucket':
+    def from_dict(cls, data: Dict[str, Any]) -> S3Bucket:
         return cls(
             name=data.get('name', ''),
             arn=data.get('arn', '')
@@ -90,16 +91,16 @@ class S3Record:
     event_name: str
     event_time: str
     bucket: S3Bucket
-    object: S3Object
+    s3_object: S3Object  # Renamed from 'object' to avoid conflicts
     
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> 'S3Record':
+    def from_dict(cls, data: Dict[str, Any]) -> S3Record:
         s3_data = data.get('s3', {})
         return cls(
             event_name=data.get('eventName', ''),
             event_time=data.get('eventTime', ''),
             bucket=S3Bucket.from_dict(s3_data.get('bucket', {})),
-            object=S3Object.from_dict(s3_data.get('object', {}))
+            s3_object=S3Object.from_dict(s3_data.get('object', {}))
         )
 
 class S3Event(BaseEvent):

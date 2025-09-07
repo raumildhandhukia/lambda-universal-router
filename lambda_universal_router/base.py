@@ -1,5 +1,9 @@
+from __future__ import annotations
 from abc import ABC, abstractmethod
-from typing import Any, Dict, Optional, Callable, TypeVar, Generic
+from typing import Any, Dict, Optional, Callable, TypeVar, Generic, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .events import BaseEvent
 
 T = TypeVar('T')
 
