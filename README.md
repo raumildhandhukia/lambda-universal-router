@@ -1,17 +1,19 @@
 # Lambda Universal Router
 
-A flexible and extensible AWS Lambda event router that supports multiple event sources. This library makes it easy to handle different types of AWS Lambda events in a clean and organized way.
+[![PyPI version](https://badge.fury.io/py/lambda-universal-router.svg)](https://badge.fury.io/py/lambda-universal-router)
+[![Python Support](https://img.shields.io/pypi/pyversions/lambda-universal-router.svg)](https://pypi.org/project/lambda-universal-router/)
+[![License](https://img.shields.io/github/license/raumildhandhukia/lambda-universal-router.svg)](https://github.com/raumildhandhukia/lambda-universal-router/blob/main/LICENSE)
+
+A flexible and type-safe router for AWS Lambda functions that supports multiple event sources. This library makes it easy to handle different types of AWS Lambda events in a clean and organized way.
 
 ## Features
 
-- Support for multiple AWS event sources:
-  - API Gateway
-  - SQS
-  - S3
-- Easy to extend with new event sources
-- Type-safe event handling with Python type hints
-- Clean decorator-based routing
-- Structured event objects with proper typing
+- 🎯 Type-safe event handling with proper Python type hints
+- 🔄 Support for multiple AWS event sources
+- 🎨 Clean decorator-based routing
+- 📦 Easy to extend with new event sources
+- 🔒 Structured event objects with proper typing
+- 🔍 Custom event handler support for unknown event types
 
 ## Installation
 
@@ -19,79 +21,212 @@ A flexible and extensible AWS Lambda event router that supports multiple event s
 pip install lambda-universal-router
 ```
 
-## Usage
-
-Here's a simple example of how to use the router:
+## Quick Start
 
 ```python
 from lambda_universal_router import Router
-from lambda_universal_router.events import APIGatewayEvent, SQSEvent, S3Event
+from lambda_universal_router.events import APIGatewayEvent, SQSEvent, CustomEvent
 
 router = Router()
 
 @router.apigateway("/hello", method="GET")
-def api_hello(event: APIGatewayEvent, context):
+def hello(event: APIGatewayEvent, context):
+    name = event.query_string_parameters.get('name', 'World')
     return {
         "statusCode": 200,
-        "body": "Hello from API Gateway"
+        "body": f"Hello, {name}!"
     }
 
 @router.sqs()
 def process_queue(event: SQSEvent, context):
     for msg in event.records:
-        print("SQS Message:", msg.body)
+        print(f"Processing message {msg.message_id}: {msg.body}")
 
-@router.s3()
-def process_file(event: S3Event, context):
-    for record in event.records:
-        print("New S3 object:", record.s3.bucket.name, record.s3.object.key)
+@router.custom()
+def handle_unknown(event: CustomEvent, context):
+    print(f"Handling unknown event type: {event.event_data}")
 
 def lambda_handler(event, context):
     return router.dispatch(event, context)
 ```
 
-## Event Types
+## Supported Event Sources
 
-### API Gateway Event
+### 1. API Gateway (REST/HTTP APIs)
+```python
+from lambda_universal_router.events import APIGatewayEvent
 
-The `APIGatewayEvent` provides access to:
-- HTTP method
-- Path
-- Headers
-- Query string parameters
-- Path parameters
-- Request body
-- Request context
+@router.apigateway("/users/{id}", method="GET")
+def get_user(event: APIGatewayEvent, context):
+    user_id = event.path_parameters['id']
+    return {
+        "statusCode": 200,
+        "headers": {"Content-Type": "application/json"},
+        "body": {"id": user_id, "name": "John Doe"}
+    }
+```
+Available properties:
+- `http_method`: HTTP method (GET, POST, etc.)
+- `path`: Request path
+- `headers`: Request headers
+- `query_string_parameters`: Query string parameters
+- `path_parameters`: Path parameters
+- `body`: Request body
+- `request_context`: API Gateway request context
 
-### SQS Event
+### 2. SQS (Simple Queue Service)
+```python
+from lambda_universal_router.events import SQSEvent
 
-The `SQSEvent` provides access to:
-- List of SQS messages
-- Message attributes
-- Message body
-- Message ID
+@router.sqs()
+def process_messages(event: SQSEvent, context):
+    for msg in event.records:
+        print(f"Message ID: {msg.message_id}")
+        print(f"Body: {msg.body}")
+        print(f"Attributes: {msg.attributes}")
+```
+Available properties:
+- `records`: List of SQS messages
+- Each record has:
+  - `message_id`: Unique message ID
+  - `body`: Message body
+  - `attributes`: Message attributes
 
-### S3 Event
+### 3. S3 (Object Storage)
+```python
+from lambda_universal_router.events import S3Event
 
-The `S3Event` provides access to:
-- List of S3 records
-- Bucket information (name, ARN)
-- Object information (key, size, etag)
-- Event name and time
+@router.s3()
+def handle_s3_events(event: S3Event, context):
+    for record in event.records:
+        print(f"Bucket: {record.bucket.name}")
+        print(f"Key: {record.s3_object.key}")
+        print(f"Event: {record.event_name}")
+```
+Available properties:
+- `records`: List of S3 events
+- Each record has:
+  - `event_name`: Type of event (e.g., ObjectCreated:Put)
+  - `bucket`: Bucket information (name, arn)
+  - `s3_object`: Object information (key, size, etag)
 
-## Extending with New Event Sources
+### 4. DynamoDB Streams
+```python
+from lambda_universal_router.events import DynamoDBStreamEvent
 
-To add support for a new event source:
+@router.dynamodb()
+def handle_dynamodb_changes(event: DynamoDBStreamEvent, context):
+    for record in event.records:
+        print(f"Event Type: {record.event_name}")  # INSERT, MODIFY, REMOVE
+        print(f"DynamoDB: {record.dynamodb}")  # Contains Keys, NewImage, OldImage
+```
+Available properties:
+- `records`: List of DynamoDB Stream records
+- Each record has:
+  - `event_id`: Unique event ID
+  - `event_name`: Type of change (INSERT/MODIFY/REMOVE)
+  - `dynamodb`: Changed data (keys, new/old images)
 
-1. Create a new event class that inherits from `BaseEvent`
-2. Create a new handler class that inherits from `EventHandler`
-3. Add the handler to the Router's `_event_handlers` dictionary
-4. Add a decorator method to the Router class
+### 5. Kinesis Streams
+```python
+from lambda_universal_router.events import KinesisStreamEvent
+
+@router.kinesis()
+def process_stream(event: KinesisStreamEvent, context):
+    for record in event.records:
+        print(f"Partition Key: {record.partition_key}")
+        print(f"Data: {record.data}")  # Base64-decoded data
+```
+Available properties:
+- `records`: List of Kinesis records
+- Each record has:
+  - `kinesis_schema_version`: Schema version
+  - `partition_key`: Partition key
+  - `sequence_number`: Sequence number
+  - `data`: Base64-decoded data
+  - `approximate_arrival_timestamp`: Timestamp
+
+### 6. SNS (Simple Notification Service)
+```python
+from lambda_universal_router.events import SNSEvent
+
+@router.sns()
+def handle_notifications(event: SNSEvent, context):
+    for msg in event.records:
+        print(f"Message: {msg.message}")
+        print(f"Topic: {msg.topic_arn}")
+```
+Available properties:
+- `records`: List of SNS messages
+- Each message has:
+  - `message_id`: Unique message ID
+  - `topic_arn`: SNS topic ARN
+  - `message`: Message content
+  - `subject`: Message subject
+  - `timestamp`: Message timestamp
+  - `message_attributes`: Message attributes
+
+### 7. EventBridge (CloudWatch Events)
+```python
+from lambda_universal_router.events import EventBridgeEvent
+
+@router.eventbridge()
+def handle_scheduled_event(event: EventBridgeEvent, context):
+    print(f"Source: {event.source}")
+    print(f"Detail Type: {event.detail_type}")
+    print(f"Detail: {event.detail.raw_detail}")
+```
+Available properties:
+- `version`: Event version
+- `id`: Event ID
+- `detail_type`: Type of event
+- `source`: Event source
+- `account`: AWS account ID
+- `time`: Event time
+- `region`: AWS region
+- `resources`: List of affected resources
+- `detail`: Event details
+
+### 8. Custom Events
+```python
+from lambda_universal_router.events import CustomEvent
+
+@router.custom()
+def handle_unknown_events(event: CustomEvent, context):
+    # Fallback handler for unknown event types
+    print(f"Raw event data: {event.event_data}")
+    return "Processed unknown event type"
+```
+Available properties:
+- `event_data`: Raw event dictionary
+
+## Error Handling
+
+The router will raise a `ValueError` if:
+- No handler is found for an event type
+- Multiple custom handlers are registered (only one is allowed)
+
+## Type Safety
+
+All event types are properly typed with Python type hints, providing:
+- IDE autocompletion
+- Type checking support
+- Runtime type safety
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for a list of changes and version history.
