@@ -5,12 +5,50 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.4] - 2024-03-17
+
+### Fixed
+- Fixed event imports in `events/__init__.py`
+- Fixed CI test failures by properly exposing all event types
+- Fixed package imports for all event classes
+
+## [0.2.3] - 2024-03-17
+
+### Added
+- Added comprehensive documentation for all event types:
+  - API Gateway events
+  - SQS events
+  - S3 events
+  - DynamoDB Stream events
+  - Kinesis Stream events
+  - SNS events
+  - EventBridge/CloudWatch events
+  - Kafka events
+  - Custom events
+- Added Jekyll front matter to all documentation files
+- Added proper navigation between documentation pages
+
+### Fixed
+- Fixed contributing guide rendering in GitHub Pages
+- Fixed documentation links in PyPI package
+- Fixed event documentation structure and organization
+
+### Changed
+- Improved documentation organization and navigation
+- Enhanced documentation with more examples and best practices
+- Updated PyPI package metadata with correct documentation links
+
 ## [0.2.2] - 2024-03-17
 
 ### Added
 - Comprehensive GitHub Pages documentation
 - Direct links to documentation, changelog, and license
 - Improved PyPI package metadata
+
+### Changed
+- Simplified documentation structure
+- Improved Markdown formatting
+- Enhanced examples and API documentation
 
 ## [0.2.1] - 2024-03-17
 

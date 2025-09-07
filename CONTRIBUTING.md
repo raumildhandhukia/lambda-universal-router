@@ -1,43 +1,148 @@
-# Contributing to Lambda Universal Router
+# Contributing Guide
 
-We love your input! We want to make contributing to Lambda Universal Router as easy and transparent as possible, whether it's:
+Thank you for considering contributing to Lambda Universal Router! This document provides guidelines and instructions for contributing.
 
-- Reporting a bug
-- Discussing the current state of the code
-- Submitting a fix
-- Proposing new features
-- Becoming a maintainer
+## Getting Started
 
-## We Develop with Github
-We use GitHub to host code, to track issues and feature requests, as well as accept pull requests.
+1. Fork the repository
+2. Clone your fork:
+   ```bash
+   git clone https://github.com/your-username/lambda-universal-router.git
+   cd lambda-universal-router
+   ```
 
-## We Use [Github Flow](https://guides.github.com/introduction/flow/index.html)
-Pull requests are the best way to propose changes to the codebase. We actively welcome your pull requests:
+3. Create a virtual environment:
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
 
-1. Fork the repo and create your branch from `main`.
-2. If you've added code that should be tested, add tests.
-3. If you've changed APIs, update the documentation.
-4. Ensure the test suite passes.
-5. Make sure your code lints.
-6. Issue that pull request!
+4. Install development dependencies:
+   ```bash
+   pip install -r requirements-dev.txt
+   ```
 
-## Any contributions you make will be under the MIT Software License
-In short, when you submit code changes, your submissions are understood to be under the same [MIT License](http://choosealicense.com/licenses/mit/) that covers the project. Feel free to contact the maintainers if that's a concern.
+## Development Workflow
 
-## Report bugs using Github's [issue tracker](https://github.com/raumildhandhukia/lambda-universal-router/issues)
-We use GitHub issues to track public bugs. Report a bug by [opening a new issue](https://github.com/raumildhandhukia/lambda-universal-router/issues/new); it's that easy!
+1. Create a new branch:
+   ```bash
+   git checkout -b feature/your-feature-name
+   ```
 
-## Write bug reports with detail, background, and sample code
+2. Make your changes
+3. Run tests:
+   ```bash
+   python -m pytest
+   ```
 
-**Great Bug Reports** tend to have:
+4. Commit your changes:
+   ```bash
+   git add .
+   git commit -m "Add your meaningful commit message"
+   ```
 
-- A quick summary and/or background
-- Steps to reproduce
-  - Be specific!
-  - Give sample code if you can.
-- What you expected would happen
-- What actually happens
-- Notes (possibly including why you think this might be happening, or stuff you tried that didn't work)
+5. Push to your fork:
+   ```bash
+   git push origin feature/your-feature-name
+   ```
 
-## License
-By contributing, you agree that your contributions will be licensed under its MIT License.
+6. Create a Pull Request
+
+## Adding New Event Types
+
+1. Create a new file in `lambda_universal_router/events/`:
+   ```python
+   from __future__ import annotations
+   from typing import Any, Dict
+   from dataclasses import dataclass
+   from ..base import BaseEvent
+
+   @dataclass
+   class NewEventData:
+       field1: str
+       field2: int
+
+   class NewEvent(BaseEvent):
+       def _parse_event(self, event_dict: Dict[str, Any]) -> None:
+           self.data = NewEventData(
+               field1=event_dict.get('field1', ''),
+               field2=event_dict.get('field2', 0)
+           )
+   ```
+
+2. Create a handler in `lambda_universal_router/handlers.py`:
+   ```python
+   class NewEventHandler(EventHandler):
+       def can_handle(self, event: Dict[str, Any]) -> bool:
+           return 'specific_field' in event
+
+       def parse_event(self, event: Dict[str, Any]) -> NewEvent:
+           return NewEvent(event)
+   ```
+
+3. Add to Router class in `router.py`:
+   ```python
+   def new_event(self) -> Callable:
+       def decorator(func: Callable) -> Callable:
+           self._handlers.append(
+               HandlerRegistration(
+                   func=func,
+                   handler=self._event_handlers['new_event']
+               )
+           )
+           return func
+       return decorator
+   ```
+
+4. Add tests in `tests/test_router.py`
+
+## Code Style
+
+- Follow PEP 8
+- Use type hints
+- Write docstrings for public methods
+- Keep functions focused and small
+- Add tests for new features
+
+## Running Tests
+
+```bash
+# Run all tests
+python -m pytest
+
+# Run with coverage
+python -m pytest --cov=lambda_universal_router
+
+# Run specific test file
+python -m pytest tests/test_router.py
+```
+
+## Documentation
+
+- Update docstrings for any new code
+- Add examples for new features
+- Update README.md if needed
+- Add changelog entries
+
+## Pull Request Process
+
+1. Update documentation
+2. Add tests for new features
+3. Update CHANGELOG.md
+4. Ensure all tests pass
+5. Request review from maintainers
+
+## Release Process
+
+1. Update version in `setup.py`
+2. Update CHANGELOG.md
+3. Create a new release on GitHub
+4. Publish to PyPI
+
+## Questions?
+
+Feel free to open an issue for:
+- Bug reports
+- Feature requests
+- Questions about the codebase
+- Documentation improvements
