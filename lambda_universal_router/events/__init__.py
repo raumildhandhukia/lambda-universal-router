@@ -5,6 +5,8 @@ from .dynamodb import DynamoDBStreamEvent, DynamoDBStreamRecord
 from .kinesis import KinesisStreamEvent, KinesisRecord
 from .sns import SNSEvent, SNSMessage
 from .eventbridge import EventBridgeEvent, EventBridgeDetail
+from .kafka import KafkaEvent, KafkaRecord
+from .custom import CustomEvent
 
 __all__ = [
     "APIGatewayEvent",
@@ -22,5 +24,8 @@ __all__ = [
     "SNSEvent",
     "SNSMessage",
     "EventBridgeEvent",
-    "EventBridgeDetail"
+    "EventBridgeDetail",
+    "KafkaEvent",
+    "KafkaRecord",
+    "CustomEvent"
 ]
