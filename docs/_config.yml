@@ -1,14 +1,32 @@
 title: Lambda Universal Router
 description: A flexible and type-safe router for AWS Lambda functions
+baseurl: "/lambda-universal-router"
+url: "https://raumildhandhukia.github.io"
+
+# Theme settings
 remote_theme: pages-themes/cayman@v0.2.0
 plugins:
   - jekyll-remote-theme
   - jekyll-seo-tag
 
-show_downloads: true
+# GitHub metadata
 github:
   is_project_page: true
   repository_url: https://github.com/raumildhandhukia/lambda-universal-router
   repository_name: lambda-universal-router
   owner_name: Raumil Dhandhukia
   owner_url: https://github.com/raumildhandhukia
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
+
+# Exclude files from processing
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor

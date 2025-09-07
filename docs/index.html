@@ -1,0 +1,84 @@
+---
+layout: default
+title: Lambda Universal Router
+---
+
+<h1>Lambda Universal Router</h1>
+
+<p>A flexible and type-safe router for AWS Lambda functions that supports multiple event sources.</p>
+
+<h2>Quick Start</h2>
+
+<div class="language-bash highlighter-rouge">
+  <div class="highlight">
+    <pre class="highlight"><code>pip install lambda-universal-router</code></pre>
+  </div>
+</div>
+
+<h2>Basic Usage</h2>
+
+<div class="language-python highlighter-rouge">
+  <div class="highlight">
+    <pre class="highlight"><code>from lambda_universal_router import Router
+from lambda_universal_router.events import APIGatewayEvent, SQSEvent
+
+router = Router()
+
+@router.apigateway("/hello", method="GET")
+def hello(event: APIGatewayEvent, context):
+    name = event.query_string_parameters.get('name', 'World')
+    return {
+        "statusCode": 200,
+        "body": f"Hello, {name}!"
+    }
+
+@router.sqs()
+def process_queue(event: SQSEvent, context):
+    for msg in event.records:
+        print(f"Processing message {msg.message_id}: {msg.body}")
+
+def lambda_handler(event, context):
+    return router.dispatch(event, context)</code></pre>
+  </div>
+</div>
+
+<h2>Features</h2>
+
+<ul>
+  <li>🎯 Type-safe event handling with proper Python type hints</li>
+  <li>🔄 Support for multiple AWS event sources</li>
+  <li>🎨 Clean decorator-based routing</li>
+  <li>📦 Easy to extend with new event sources</li>
+  <li>🔒 Structured event objects with proper typing</li>
+  <li>🔍 Custom event handler support for unknown event types</li>
+</ul>
+
+<h2>Event Sources</h2>
+
+<ul>
+  <li><a href="events/api-gateway.html">API Gateway</a> - Handle REST and HTTP API requests</li>
+  <li><a href="events/sqs.html">SQS</a> - Process messages from queues</li>
+  <li><a href="events/s3.html">S3</a> - React to object changes</li>
+  <li><a href="events/dynamodb.html">DynamoDB Streams</a> - Handle table changes</li>
+  <li><a href="events/kinesis.html">Kinesis</a> - Process data streams</li>
+  <li><a href="events/sns.html">SNS</a> - Handle notifications</li>
+  <li><a href="events/eventbridge.html">EventBridge</a> - Handle scheduled and custom events</li>
+  <li><a href="events/custom.html">Custom Events</a> - Handle unknown event types</li>
+</ul>
+
+<h2>Documentation</h2>
+
+<ul>
+  <li><a href="api.html">API Reference</a></li>
+  <li><a href="examples.html">Examples</a></li>
+  <li><a href="contributing.html">Contributing Guide</a></li>
+  <li><a href="changelog.html">Changelog</a></li>
+</ul>
+
+<h2>Links</h2>
+
+<ul>
+  <li><a href="https://github.com/raumildhandhukia/lambda-universal-router">GitHub Repository</a></li>
+  <li><a href="https://pypi.org/project/lambda-universal-router">PyPI Package</a></li>
+  <li><a href="https://github.com/raumildhandhukia/lambda-universal-router/issues">Issue Tracker</a></li>
+</ul>
