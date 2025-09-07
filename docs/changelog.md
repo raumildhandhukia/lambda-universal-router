@@ -12,10 +12,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.2.3] - 2024-03-17
 
+### Added
+- Added comprehensive documentation for all event types:
+  - API Gateway events
+  - SQS events
+  - S3 events
+  - DynamoDB Stream events
+  - Kinesis Stream events
+  - SNS events
+  - EventBridge/CloudWatch events
+  - Kafka events
+  - Custom events
+- Added Jekyll front matter to all documentation files
+- Added proper navigation between documentation pages
+
 ### Fixed
 - Fixed contributing guide rendering in GitHub Pages
-- Added proper Jekyll front matter to documentation files
-- Fixed documentation navigation and links
+- Fixed documentation links in PyPI package
+- Fixed event documentation structure and organization
+
+### Changed
+- Improved documentation organization and navigation
+- Enhanced documentation with more examples and best practices
+- Updated PyPI package metadata with correct documentation links
 
 ## [0.2.2] - 2024-03-17
 
