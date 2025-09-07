@@ -1,3 +1,8 @@
+---
+layout: default
+title: Contributing Guide
+---
+
 # Contributing Guide
 
 Thank you for considering contributing to Lambda Universal Router! This document provides guidelines and instructions for contributing.
